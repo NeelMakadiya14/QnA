@@ -24,8 +24,8 @@ const answerSchema = new mongoose.Schema({
     ],
   },
   date: { type: Date, default: Date.now },
-  Author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  Question: { type: mongoose.Schema.Types.ObjectId, ref: "Answer" },
+  Author: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+  Question: { type: mongoose.Schema.Types.ObjectId, ref: "Answers" },
 });
 
 module.exports = mongoose.model("Answers", answerSchema);

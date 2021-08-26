@@ -28,6 +28,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //handling routes
-app.use("/api/questions", require("./Routes/questions"));
-app.use("/api/answers", require("./Routes/answers"));
-app.use("/api/users", require("./Routes/users"));
+app.use("/api/questions", require("./Routes/question"));
+app.use("/api/answers", require("./Routes/answer"));
+app.use("/api/users", require("./Routes/user"));

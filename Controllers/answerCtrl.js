@@ -1,32 +1,31 @@
-const Question = require("./Models/Question");
-const Answer = require("./Models/Answer");
-const User = require("./Models/User");
+const Question = require("../Models/Question");
+const Answer = require("../Models/Answer");
+const User = require("../Models/User");
 
 const answerCtrl = {
   addAnswer: async (req, res) => {
     const email = req.query.email;
-    let userId;
+
     let questionId = req.query.questionId;
     let answerId;
-    await User.findOne({ email }, async (err, user) => {
-      if (err) console.log(err);
-      if (user) {
-        userId = user._id;
-      }
-    });
-
+    const user = await User.findOne({ email });
+    let userId = user._id;
+    console.log(userId);
     const newAnswer = {
       Author: userId,
       Question: questionId,
-      body: req.query.body,
-      upvoteCount: { count: 0, upVoters: [] },
-      downvoteCount: { count: 0, downVoters: [] },
+      body: req.body.body,
+      upvote: { count: 0, upVoters: [] },
+      downvote: { count: 0, downVoters: [] },
     };
+    console.log(newAnswer);
 
+    let answer;
     await Answer.create(newAnswer)
       .then((res) => {
         console.log(res);
         answerId = res._id;
+        answer = res;
       })
       .catch((err) => console.log(err));
 
@@ -46,12 +45,12 @@ const answerCtrl = {
     );
     console.log(updatedQuestion);
 
-    res.send("Answer Added");
+    res.send(answer);
   },
 
   //deletes a answer
   deleteAnswer: async (req, res) => {
-    const aid = req.query.qid;
+    const aid = req.query.aid;
     const answer = await Answer.findOne({ _id: aid });
 
     await Question.update(
@@ -67,34 +66,48 @@ const answerCtrl = {
         $pull: { Answers: aid },
       }
     );
-    question.remove();
+    answer.remove();
     res.send("successfully deleted");
   },
 
   //handle upVote
   upVote: async (req, res) => {
+    console.log("upvote");
     const upVoted = req.query.upVoted;
     const email = req.query.email;
     const aid = req.query.aid;
     let userId;
-
+    console.log(upVoted, " : ", aid);
     await User.findOne({ email }, async (err, user) => {
       if (err) console.log(err);
-
+      //   console.log(user);
       if (user) {
         userId = user._id;
 
-        if (upVoted) {
+        if (upVoted === "1") {
+          console.log(userId);
+          await Answer.update(
+            { _id: aid },
+            {
+              $push: { "upvote.upVoters": userId },
+              $inc: { "upvote.count": 1 },
+            }
+          ).then((res) => {
+            // console.log(res);
+          });
+        } else {
           await Answer.updateOne(
             { _id: aid },
-            { $inc: { upvoteCount: 1 }, $push: { upVoters: userId } }
-          );
-        } else {
-          await Answers.updateOne(
-            { _id: aid },
-            { $inc: { upvoteCount: -1 }, $pull: { upVoters: userId } }
-          );
+            {
+              $inc: { "upvote.count": -1 },
+              $pull: { "upvote.upVoters": userId },
+            }
+          ).then((res) => {
+            // console.log(res);
+          });
         }
+
+        res.send("upvoted");
       }
     });
   },
@@ -105,7 +118,7 @@ const answerCtrl = {
     const email = req.query.email;
     const aid = req.query.aid;
     let userId;
-
+    console.log("downvote : " + downVoted);
     await User.findOne({ email }, async (err, user) => {
       if (err) {
         console.log(err);
@@ -113,17 +126,25 @@ const answerCtrl = {
       if (user) {
         userId = user._id;
 
-        if (downVoted) {
+        if (downVoted === "1") {
           await Answer.updateOne(
             { _id: aid },
-            { $inc: { downvoteCount: 1 }, $push: { downVoters: userId } }
+            {
+              $inc: { "downvote.count": 1 },
+              $push: { "downvote.downVoters": userId },
+            }
           );
         } else {
           await Answer.updateOne(
             { _id: aid },
-            { $inc: { downvoteCount: -1 }, $pull: { downVoters: userId } }
+            {
+              $inc: { "downvote.count": -1 },
+              $pull: { "downvote.downVoters": userId },
+            }
           );
         }
+
+        res.send("downvoted");
       }
     });
   },

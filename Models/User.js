@@ -26,8 +26,8 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  Questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-  Answers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Answer" }],
+  Questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Questions" }],
+  Answers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Answers" }],
 });
 
 module.exports = mongoose.model("Users", userSchema);

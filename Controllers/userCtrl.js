@@ -1,7 +1,5 @@
 //importing Models
-const Question = require("./Models/Question");
-const Answer = require("./Models/Answer");
-const User = require("./Models/User");
+const User = require("../Models/User");
 
 const userCtrl = {
   //Arrow function to get the user
@@ -19,14 +17,14 @@ const userCtrl = {
   },
 
   //Arrow function to add or update the user
-  addUser: (req, res) => {
+  addUser: async (req, res) => {
     const newData = req.body;
-    console.log(newAuthor);
+    console.log("Data Arrived..");
 
-    Author.find({ email: req.body.email }, (err, user) => {
-      console.log(err);
+    await User.find({ email: req.body.email }, async (err, user) => {
+      console.log("User Length : " + user.length);
       if (user.length > 0) {
-        Author.updateOne(
+        await User.updateOne(
           { email: req.body.email },
           {
             $set: {
@@ -38,10 +36,11 @@ const userCtrl = {
           .then((res) => console.log(res))
           .catch((err) => console.log(err));
       } else {
-        User.create(newData)
+        await User.create(newData)
           .then((res) => console.log(res))
           .catch((err) => console.log(err));
       }
+      console.log("Data Added..");
       res.send("success");
     });
   },
