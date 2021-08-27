@@ -69,7 +69,7 @@ const answerCtrl = {
     answer.remove();
     res.send("successfully deleted");
   },
-
+  //
   //handle upVote
   upVote: async (req, res) => {
     console.log("upvote");
