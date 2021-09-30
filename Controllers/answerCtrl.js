@@ -148,6 +148,30 @@ const answerCtrl = {
       }
     });
   },
+
+  // verified the answer
+  verified: async (req, res) => {
+    const aid = req.query.aid;
+    await Answer.updateOne(
+      { _id: aid },
+      {
+        $set: { verified: true },
+      }
+    );
+    res.send("verified");
+  },
+
+  //unverified the answer
+  unverified: async (req, res) => {
+    const aid = req.query.aid;
+    await Answer.updateOne(
+      { _id: aid },
+      {
+        $set: { verified: false },
+      }
+    );
+    res.send("unverified");
+  },
 };
 
 module.exports = answerCtrl;

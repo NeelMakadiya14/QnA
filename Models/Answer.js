@@ -26,6 +26,7 @@ const answerSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   Author: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
   Question: { type: mongoose.Schema.Types.ObjectId, ref: "Answers" },
+  verified: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model("Answers", answerSchema);
